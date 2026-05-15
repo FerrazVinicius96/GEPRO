@@ -4,6 +4,10 @@
  */
 
 export const config = {
-  /** URL base da API sem trailing slash. Ex: http://localhost:5000/api */
-  apiUrl: `${process.env.REACT_APP_API_URL ?? 'http://localhost:5000'}/api`,
+  // Ajuste rápido: Usa a variável de ambiente se existir,
+  // ou aponta dinamicamente para o mesmo IP que serviu a página, na porta 5000.
+  apiUrl: process.env.REACT_APP_API_URL
+    ? `${process.env.REACT_APP_API_URL}/api`
+    : `http://${window.location.hostname}:5000/api`,
 } as const;
+

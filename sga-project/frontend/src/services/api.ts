@@ -17,6 +17,9 @@ import { config } from '../config/env';
 
 const api = axios.create({
   baseURL: config.apiUrl,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
 });
 
 // ── Request: injeta token em todas as chamadas ────────────────────────────────

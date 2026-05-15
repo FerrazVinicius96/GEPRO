@@ -15,8 +15,11 @@ const app = express();
 app.use(express.json());
 app.use(
 	cors({
-		exposedHeaders: 'Content-Disposition',
-	}),
+		origin: '*',
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'ngrok-skip-browser-warning'],
+		exposedHeaders: ['Content-Disposition'],
+	})
 );
 
 // --- HEALTH CHECK ---
