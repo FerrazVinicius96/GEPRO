@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3002;
 const HOST = '0.0.0.0';
 
 const buildPath = path.join(__dirname, 'build');
