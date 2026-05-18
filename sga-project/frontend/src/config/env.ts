@@ -1,3 +1,3 @@
 export const config = {
-  apiUrl: '/api',
+  apiUrl: process.env.REACT_APP_API_URL ?? '/api',
 } as const;
