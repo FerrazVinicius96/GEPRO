@@ -11,9 +11,9 @@ if [ -f ".env" ]; then
   export $(grep -v '^#' .env | xargs)
 fi
 
-DB_NAME="sga_db"
+DB_NAME="sga_homolog_db"
 DB_USER="${PGUSER:-postgres}"
-export PGPASSWORD="${PGPASSWORD:-admin}"
+export PGPASSWORD="${PGPASSWORD:-Dm45d38($)}"
 
 PSQL="C:/Program Files/PostgreSQL/18/bin/psql.exe"
 
@@ -29,10 +29,27 @@ echo "[1/3] Criando banco de dados '$DB_NAME' (se não existir)..."
   echo "      Banco criado com sucesso." || \
   echo "      Banco já existe, continuando..."
 
-# 2. Aplica o schema
-echo "[2/3] Aplicando schema (tabelas e índices)..."
-"$PSQL" -U "$DB_USER" -d "$DB_NAME" -f schema.sql
-echo "      Schema aplicado com sucesso."
+# 2. Aplica schemas, migrations e seeds em ordem
+echo "[2/3] Aplicando schemas, migrations e seeds..."
+
+apply_sql() {
+  local file="$1"
+  local label="$2"
+  if [ -f "$file" ]; then
+    printf "      %s... " "$label"
+    "$PSQL" -U "$DB_USER" -d "$DB_NAME" -f "$file" -q
+    echo "ok."
+  else
+    echo "      [AVISO] $file não encontrado — pulando."
+  fi
+}
+
+apply_sql "schema.sql"                    "Schema SGA (tabelas e seed do admin)"
+apply_sql "gepro_schema.sql"              "Schema GEPRO (tabelas base)"
+apply_sql "gepro_migration_v2.sql"        "Migration GEPRO v2 (constraints, novos módulos, templates)"
+apply_sql "gepro_seed.sql"                "Seed GEPRO (50 demandas de demonstração)"
+apply_sql "gepro_migration_v3_lei14133.sql" "Migration GEPRO v3 (Lei 14.133/2021)"
+apply_sql "gepro_migration_v4_pdf.sql"    "Migration GEPRO v4 (campos PDF)"
 
 # 3. Resultado
 echo ""

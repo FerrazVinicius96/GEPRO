@@ -2,7 +2,7 @@
 -- GEPRO Migration v3: Adequação Lei 14.133/21
 -- Data: 2026-05-15
 -- Docs: analise_juridica_gepro.md
--- Execução: psql -U postgres -d sga_db -f gepro_migration_v3_lei14133.sql
+-- Execução: psql -U postgres -d sga_homolog_db -f gepro_migration_v3_lei14133.sql
 -- =============================================
 
 -- 1. Alterar Constraints de Modalidade Licitatória (Remover Convite/SRP, Adicionar Contratação Direta e Adesão ARP)

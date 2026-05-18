@@ -1,7 +1,7 @@
 -- =============================================
 -- GEPRO - Gestão de Aquisições (Lei 14.133/2021)
 -- Schema: gepro.*
--- Execução: psql -U postgres -d sga_db -f gepro_schema.sql
+-- Execução: psql -U postgres -d sga_homolog_db -f gepro_schema.sql
 -- =============================================
 
 CREATE SCHEMA IF NOT EXISTS gepro;

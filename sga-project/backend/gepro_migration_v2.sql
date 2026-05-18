@@ -2,7 +2,7 @@
 -- GEPRO Migration v2: Adequação Gerencial
 -- Data: 2026-05-13
 -- Docs: REGRAS_NEGOCIO_REVISADAS.md, IMPACTO_TECNICO_REVISAO.md
--- Execução: psql -U postgres -d sga_db -f gepro_migration_v2.sql
+-- Execução: psql -U postgres -d sga_homolog_db -f gepro_migration_v2.sql
 -- =============================================
 
 -- ============================================================

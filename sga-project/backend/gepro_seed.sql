@@ -1,6 +1,6 @@
 -- ============================================================
 -- GEPRO SEED — 50 demandas fictícias para apresentação
--- Executar: psql -U postgres -d sga_db -f gepro_seed.sql
+-- Executar: psql -U postgres -d sga_homolog_db -f gepro_seed.sql
 -- Pré-requisito: gepro_schema.sql já executado; usuário id=1 (admin) existente
 -- ============================================================
 

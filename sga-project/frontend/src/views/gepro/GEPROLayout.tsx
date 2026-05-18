@@ -137,6 +137,13 @@ export default function GEPROLayout() {
       {/* CONTEÚDO PRINCIPAL */}
       <div className="flex-1 flex flex-col lg:ml-64 transition-all duration-300 ease-in-out">
         
+        {/* Banner de ambiente */}
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="bg-amber-400 text-amber-900 px-6 py-2 text-xs font-bold text-center tracking-wider border-b border-amber-500 shadow-sm">
+            ⚠️ AMBIENTE DE HOMOLOGAÇÃO — DADOS FICTÍCIOS NÃO AFETAM A PRODUÇÃO
+          </div>
+        )}
+
         {/* Header */}
         <header className="bg-white shadow-sm p-4 flex items-center justify-between lg:justify-end">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-blue-800 focus:outline-none">
@@ -154,9 +161,9 @@ export default function GEPROLayout() {
             </button>
 
             {headerMenuOpen && (
-              <div 
+              <div
                 className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border"
-                onMouseLeave={() => setHeaderMenuOpen(false)} 
+                onMouseLeave={() => setHeaderMenuOpen(false)}
               >
                 <button
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
@@ -173,13 +180,6 @@ export default function GEPROLayout() {
             )}
           </div>
         </header>
-
-        {/* Banner de ambiente */}
-        {process.env.NODE_ENV !== 'production' && (
-          <div className="bg-amber-400 text-amber-900 px-6 py-2 text-xs font-bold text-center tracking-wider border-b border-amber-500 shadow-sm z-40 sticky top-0">
-            ⚠️ AMBIENTE DE HOMOLOGAÇÃO — DADOS FICTÍCIOS NÃO AFETAM A PRODUÇÃO
-          </div>
-        )}
 
         <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
           <div className="max-w-7xl mx-auto h-full">

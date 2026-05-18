@@ -26,6 +26,10 @@ CREATE TABLE IF NOT EXISTS units (
   updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Remove restrição de tipo legada caso exista de versão anterior do schema
+-- (o campo type é livre — valores como ALMOXARIFADO e ESCOLAR são válidos)
+ALTER TABLE units DROP CONSTRAINT IF EXISTS check_unit_type;
+
 -- ========================
 -- 2. USERS
 -- ========================

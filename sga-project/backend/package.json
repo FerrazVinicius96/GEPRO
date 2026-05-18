@@ -4,7 +4,11 @@
 	"main": "src/index.js",
 	"scripts": {
 		"start": "node src/index.js",
-		"dev": "nodemon src/index.js"
+		"dev": "nodemon src/index.js",
+		"start:prod": "pm2 start src/index.js --name sga-homolog",
+		"stop:prod": "pm2 stop sga-homolog",
+		"logs": "pm2 logs sga-homolog",
+		"setup": "node setup.js"
 	},
 	"keywords": [],
 	"author": "",

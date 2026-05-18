@@ -1,7 +1,7 @@
 -- =============================================
 -- GEPRO Migration v4: Campos para geração de PDF
 -- Data: 2026-05-15
--- Execução: psql -U postgres -d sga_db -f gepro_migration_v4_pdf.sql
+-- Execução: psql -U postgres -d sga_homolog_db -f gepro_migration_v4_pdf.sql
 -- =============================================
 
 -- 1. Adicionar campos na tabela de Termo de Referência
