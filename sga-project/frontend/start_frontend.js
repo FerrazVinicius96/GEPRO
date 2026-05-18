@@ -11,7 +11,9 @@ const buildPath = path.join(__dirname, 'build');
 console.log('Servindo arquivos da pasta:', buildPath);
 
 // Proxy /api para o backend (porta 5001)
-app.use('/api', createProxyMiddleware({
+// Montado na raiz para evitar que o Express faça strip do prefixo /api antes de repassar ao proxy
+app.use(createProxyMiddleware({
+  pathFilter: '/api',
   target: 'http://localhost:5001',
   changeOrigin: true,
 }));
