@@ -11,8 +11,8 @@ const buildPath = path.join(__dirname, 'build');
 console.log('Servindo arquivos da pasta:', buildPath);
 
 // Proxy /api para o backend (porta 5001)
-// Contexto passado diretamente ao createProxyMiddleware (API v2) para preservar o prefixo /api
-app.use(createProxyMiddleware('/api', {
+app.use(createProxyMiddleware({
+  pathFilter: '/api',
   target: 'http://localhost:5001',
   changeOrigin: true,
 }));
