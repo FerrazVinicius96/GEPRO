@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const authRoute = require('./routes/sga/authRoute');
 const usersRoute = require('./routes/sga/usersRoute');
 const bifurcacaoRoute = require('./routes/sga/bifurcacaoRoute');
@@ -39,15 +38,5 @@ app.use('/api/gepro/templates', templatesRoute);
 app.use('/api/gepro/contratos', contratosRoute);
 app.use('/api/gepro/fornecedores', fornecedoresRoute);
 app.use('/api/gepro/stats', statsRoute);
-
-// --- ARQUIVOS ESTÁTICOS (build do React) ---
-// Deve ficar após todas as rotas /api para não interceptá-las.
-const buildPath = path.join(__dirname, '../../frontend/build');
-app.use(express.static(buildPath));
-
-// SPA fallback: qualquer rota não reconhecida devolve o index.html do React
-app.get(/.*/, (req, res) => {
-	res.sendFile(path.join(buildPath, 'index.html'));
-});
 
 module.exports = app;

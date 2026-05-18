@@ -1,18 +1,25 @@
 const express = require('express');
 const path = require('path');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
 const app = express();
 
 const PORT = 3000;
-const HOST = '0.0.0.0'; // Ouve em todas as placas de rede
+const HOST = '0.0.0.0';
 
-// Define onde está a pasta build
 const buildPath = path.join(__dirname, 'build');
 console.log('Servindo arquivos da pasta:', buildPath);
 
-// Serve os arquivos estáticos
+// Proxy /api para o backend (porta 5001)
+app.use('/api', createProxyMiddleware({
+  target: 'http://localhost:5001',
+  changeOrigin: true,
+}));
+
+// Serve os arquivos estáticos do React
 app.use(express.static(buildPath));
 
-// CORREÇÃO AQUI: Usamos Regex /.*/ em vez de string '*' para compatibilidade
+// SPA fallback
 app.get(/.*/, function (req, res) {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
