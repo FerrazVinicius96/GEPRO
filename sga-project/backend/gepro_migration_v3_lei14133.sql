@@ -7,12 +7,13 @@
 
 -- 1. Alterar Constraints de Modalidade Licitatória (Remover Convite/SRP, Adicionar Contratação Direta e Adesão ARP)
 ALTER TABLE gepro.demanda DROP CONSTRAINT IF EXISTS demanda_modalidade_licitatoria_check;
-ALTER TABLE gepro.demanda ADD CONSTRAINT demanda_modalidade_licitatoria_check 
-    CHECK (modalidade_licitatoria IN ('pregao', 'concorrencia', 'concurso', 'leilao', 'dialogo_competitivo', 'dispensa', 'inexigibilidade', 'adesao_arp'));
 
--- Atualizar registros existentes para não quebrar a base de dados
+-- Converter valores antigos ANTES de adicionar o novo constraint
 UPDATE gepro.demanda SET modalidade_licitatoria = 'adesao_arp' WHERE modalidade_licitatoria IN ('srp', 'ata_registro_precos');
-UPDATE gepro.demanda SET modalidade_licitatoria = 'dispensa' WHERE modalidade_licitatoria = 'convite';
+UPDATE gepro.demanda SET modalidade_licitatoria = 'dispensa'   WHERE modalidade_licitatoria = 'convite';
+
+ALTER TABLE gepro.demanda ADD CONSTRAINT demanda_modalidade_licitatoria_check
+    CHECK (modalidade_licitatoria IN ('pregao', 'concorrencia', 'concurso', 'leilao', 'dialogo_competitivo', 'dispensa', 'inexigibilidade', 'adesao_arp'));
 
 -- 2. Adicionar campos obrigatórios no ETP (Art. 18)
 ALTER TABLE gepro.etp 
