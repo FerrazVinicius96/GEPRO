@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import InputMask from 'react-input-mask';
 import {
-  Mail, Lock, LogIn, Menu, X, LayoutDashboard, HardDrive, BarChart2, Bell, Settings, LogOut,
+  Menu, X, LayoutDashboard, HardDrive, BarChart2, Bell, Settings, LogOut,
   Box, CornerDownRight, CornerUpLeft, Calendar, List, Inbox, PlusCircle, UploadCloud, Edit, Trash2,
   CheckCircle, XCircle, Info, AlertTriangle as AlertTriangleIcon, Repeat, FileText, Users, 
   Search, Archive, ArrowRightLeft, ChevronDown, History, UserCircle, Save, Activity, Database, ArrowDownCircle, Smartphone, ChevronRight, GraduationCap, Truck, Layers, ArchiveRestore, Package, Code, TrendingUp  // Adicionado Users e Search para pessoas e busca
 } from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios, { AxiosError } from 'axios';
-import logoSGA from './assets/images/logo-sga-azul.png'; // Ajuste o caminho se necessário
+import logoSGA from './assets/images/logo-sga-azul.png'; // Usado no sidebar do DashboardPage
 import MovementQueryPage from './components/MovementQueryPage'; // Importa o novo componente
 import DeliveryConfirmationPage from './components/DeliveryConfirmationPage';
 import ConfirmationModal from './components/ConfirmationModal';
@@ -43,7 +43,7 @@ import ModuleChooser from './components/ModuleChooser';
 
 // ── Camada modular: tipos, contextos, config, permissões ─────────────────────
 import { ToastProvider, useToast } from './contexts/ToastContext';
-import { AuthContext, AuthProvider } from './contexts/AuthContext';
+import { AuthContext, AuthProvider, useAuth } from './contexts/AuthContext';
 import { config } from './config/env';
 import { PERMISSIONS } from './constants/permissions';
 import type {
@@ -68,6 +68,11 @@ import type {
 export type { Asset, Movement, Unit, Person, Peripheral };
 export { useToast };
 
+// ── Componentes do fluxo de autenticação (extraídos do monolito) ─────────────
+import LoginPage from './views/auth/LoginPage';
+import ForcedChangePasswordPage from './views/auth/ForcedChangePasswordPage';
+import ChangePasswordModal from './components/ChangePasswordModal';
+import EnvironmentBadge from './components/EnvironmentBadge';
 // ── Fim dos imports modularizados ────────────────────────────────────────────
 
 /**
@@ -193,103 +198,7 @@ const translateActionType = (type: string): string => {
 
 // AuthContext migrado para src/contexts/AuthContext.tsx — importado acima.
 
-// Componente da Página de Login
-const LoginPage = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const { login } = useContext(AuthContext) as AuthContextType;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    await login(email, password);
-    setLoading(false);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center font-sans text-gray-800">
-      <div className="bg-white p-8 md:p-12 rounded-xl shadow-2xl w-full max-w-md mx-4 sm:mx-6 md:mx-auto">
-        <div className="flex justify-center mb-6">
-          <img
-            src={logoSGA}
-            alt="Logo Prefeitura do Recife"
-            className="h-40 w-auto rounded-lg shadow-md"
-            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/150x80/007bff/ffffff?text=Logo'; }}
-          />
-        </div>
-
-        <h2 className="text-3xl font-extrabold text-center text-blue-900 mt-8 mb-8 tracking-tight">
-          SGA - Sistema de Gestão de Ativos
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              <Mail className="inline-block w-4 h-4 mr-2 text-blue-600" /> Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="text"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="appearance-none block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-200 ease-in-out"
-              placeholder="admin@sga.local"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              <Lock className="inline-block w-4 h-4 mr-2 text-blue-600" /> Senha
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-200 ease-in-out"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition duration-300 ease-in-out transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Entrar
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-8 text-center text-sm text-gray-600">
-          <p>Acesso restrito. Solicite seu cadastro via e-mail:</p>
-          <a href="mailto:relacionamentosepti@educ.rec.br" className="font-medium text-blue-700 hover:text-blue-900 transition-colors duration-200">
-            relacionamentosepti@educ.rec.br
-          </a>
-        </div>
-
-        {/* >>> ASSINATURA NA TELA DE LOGIN <<< */}
-        <div className="mt-8 pt-6 border-t border-blue-100 text-center">
-          <p className="text-xs text-gray-500 font-medium">Sistema de Gestão de Ativos (SGA)</p>
-          <p className="text-[11px] text-gray-400 mt-1">
-            Idealizado e desenvolvido pela <span className="font-semibold text-gray-500">GIT - Gerência de Infraestrutura</span>
-          </p>
-          <p className="text-[10px] text-gray-400 mt-1 flex items-center justify-center">
-            <Code className="w-3 h-3 mr-1" /> Gestão: Alberto Dantas
-          </p>
-        </div>
-
-      </div>
-    </div>
-  );
-};
+// LoginPage → extraído para src/views/auth/LoginPage.tsx
 
 // Arquivo: App.tsx
 
@@ -4242,58 +4151,7 @@ const ReturnsPage = ({ onStartReturnByUser, onStartReturnByAsset }: ReturnsPageP
 };
 
 // >>> NOVO COMPONENTE DE MODAL ALTERAÇÃO DE SENHA <<<
-interface ChangePasswordModalProps {
-  onClose: () => void;
-  onSave: (passwordData: any) => Promise<void>;
-}
-
-const ChangePasswordModal = ({ onClose, onSave }: ChangePasswordModalProps) => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { addToast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      addToast('A nova senha e a confirmação não correspondem.', 'error');
-      return;
-    }
-    setLoading(true);
-    await onSave({ currentPassword, newPassword, confirmPassword });
-    setLoading(false);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[1002] p-4">
-      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"><X className="w-6 h-6" /></button>
-        <h2 className="text-2xl font-bold text-blue-900 mb-6">Alterar Senha</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Senha Atual</label>
-            <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nova Senha</label>
-            <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Confirmar Nova Senha</label>
-            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
-          </div>
-          <div className="flex justify-end space-x-3 pt-4">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancelar</button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50">
-              {loading ? 'Salvando...' : 'Salvar Nova Senha'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
+// ChangePasswordModal → extraído para src/components/ChangePasswordModal.tsx
 
 // >>> COMPONENTE DE MODAL PROFILE <<<
 interface ProfileModalProps {
@@ -4368,53 +4226,7 @@ const ProfileModal = ({ onClose, onSave, currentUser, onChangePasswordClick }: P
     </div>
   );
 };
-// Arquivo: App.tsx
-
-// >>>  NOVO COMPONENTE DE PÁGINA - Tela de Troca Obrigatória de Senha <<<
-const ForcedChangePasswordPage = () => {
-  // Pegamos as funções que precisamos do contexto
-  const API_URL = config.apiUrl;
-  const { addToast } = useToast();
-
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-4">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Alteração de Senha Obrigatória</h1>
-        <p className="text-gray-600">Por segurança, você precisa definir uma nova senha para continuar.</p>
-      </div>
-      {/* Reutilizamos o modal de troca de senha, mas sem o botão de fechar */}
-      <div className="w-full max-w-md">
-        <ChangePasswordModal
-          onClose={() => {}} // Não faz nada, impedindo o fechamento
-          onSave={async (passwordData) => {
-            try {
-              // A chamada para a API permanece a mesma
-              const response = await axios.post(`${API_URL}/users/me/change-password`, passwordData);
-              
-              // Captura o novo token da resposta do backend
-              const { token: newToken } = response.data;
-              
-              // Salva o novo token no localStorage, substituindo o antigo
-              localStorage.setItem('token', newToken);
-
-              addToast('Senha alterada com sucesso! Redirecionando...', 'success');
-              
-              // Recarrega a aplicação após 2 segundos
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-              
-            } catch (error: unknown) {
-              const axiosError = error as AxiosError<BackendErrorResponse>;
-              const errorMessage = axiosError.response?.data?.message || 'Erro ao alterar a senha.';
-              addToast(errorMessage, 'error');
-            }
-          }}
-        />
-      </div>
-    </div>
-  );
-};
+// ForcedChangePasswordPage → extraído para src/views/auth/ForcedChangePasswordPage.tsx
 
 interface MovementQueryPageProps {
   filters: any;
@@ -4429,41 +4241,7 @@ interface MovementQueryPageProps {
   handleGenerateMovementReceipt: (id: number) => void;
 }
 
-// ============================================================================
-// COMPONENTE AUTOCONSCIENTE DE AMBIENTE (Inovação de Infraestrutura)
-// ============================================================================
-const EnvironmentBadge = () => {
-  const currentHost = window.location.hostname;
-  
-  // Ativa o alerta visual se estiver no servidor .83 ou rodando local (testes)
-  const isTestEnvironment = currentHost === '100.67.80.83' || currentHost === 'localhost';
-
-  // Se for Produção (100.67.80.80), o componente simplesmente não renderiza nada (invisível)
-  if (!isTestEnvironment) return null;
-
-  return (
-    <>
-      {/* 1. Barra Global no Topo (Estilo Fita Zebrada de Cuidado) */}
-      <div className="fixed top-0 left-0 w-full z-[9999] bg-yellow-400 text-yellow-900 py-1 text-center font-bold text-[11px] tracking-widest uppercase shadow-md flex items-center justify-center pointer-events-none opacity-90">
-        <AlertTriangleIcon className="w-3 h-3 mr-2" />
-        Atenção: Ambiente de Homologação — Dados fictícios. Não afeta a Produção.
-        <AlertTriangleIcon className="w-3 h-3 ml-2" />
-      </div>
-
-      {/* 2. Selo Flutuante Persistente no canto inferior direito */}
-      <div className="fixed bottom-6 right-6 z-[9998] bg-gray-900 bg-opacity-80 backdrop-blur-sm text-yellow-400 border border-yellow-500 px-4 py-2 rounded-full shadow-2xl flex items-center pointer-events-none animate-pulse">
-         <Code className="w-5 h-5 mr-2" />
-         <div className="flex flex-col">
-           <span className="font-mono font-bold text-xs leading-tight">HOMOLOGAÇÃO</span>
-           <span className="text-[9px] text-gray-300 leading-tight">IP: {currentHost}</span>
-         </div>
-      </div>
-
-      {/* 3. Borda amarela sutil ao redor de toda a tela para reforço psicológico */}
-      <div className="fixed inset-0 border-4 border-yellow-400 pointer-events-none z-[9997] opacity-20"></div>
-    </>
-  );
-};
+// EnvironmentBadge → extraído para src/components/EnvironmentBadge.tsx
 
 // Componente principal da aplicação
 const App = () => {
@@ -4477,8 +4255,9 @@ const App = () => {
   );
 };
 
+// TODO: extrair AppContent para src/routes/AppRouter.tsx quando DashboardPage for modularizado
 const AppContent = () => {
-  const { user, loading } = useContext(AuthContext) as AuthContextType;
+  const { user, loading } = useAuth();
 
   if (loading) {
     // ... (tela de loading permanece a mesma)
