@@ -40,6 +40,10 @@ import ExecutiveDashboard from './components/ExecutiveDashboard';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import GEPRORoutes from './routes/GEPRORoutes';
 import ModuleChooser from './components/ModuleChooser';
+import LoginPage from './views/auth/LoginPage';
+import ForcedChangePasswordPage from './views/auth/ForcedChangePasswordPage';
+import ChangePasswordModal from './components/ChangePasswordModal';
+import EnvironmentBadge from './components/EnvironmentBadge';
 
 // ── Camada modular: tipos, contextos, config, permissões ─────────────────────
 import { ToastProvider, useToast } from './contexts/ToastContext';
@@ -68,11 +72,6 @@ import type {
 export type { Asset, Movement, Unit, Person, Peripheral };
 export { useToast };
 
-// ── Componentes do fluxo de autenticação (extraídos do monolito) ─────────────
-import LoginPage from './views/auth/LoginPage';
-import ForcedChangePasswordPage from './views/auth/ForcedChangePasswordPage';
-import ChangePasswordModal from './components/ChangePasswordModal';
-import EnvironmentBadge from './components/EnvironmentBadge';
 // ── Fim dos imports modularizados ────────────────────────────────────────────
 
 /**
