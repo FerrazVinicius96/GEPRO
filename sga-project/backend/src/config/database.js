@@ -9,12 +9,29 @@ const pool = new Pool({
 	client_encoding: 'UTF8',
 });
 
-pool.on('error', (err) => {
-	if (err) {
-		console.error('Erro na conexão com o banco de dados: ', err);
-	}
+// 1. Escuta quando uma NOVA conexão física é criada pelo Pool
+pool.on('connect', (client) => {
+	client
+		.query('SET search_path TO gepro, sga, identity, public;')
+		.then(() => {
+			// Opcional: Descomente a linha abaixo para debugar conexões em dev
+			// console.log('📦 Nova conexão estabelecida. search_path configurado.');
+		})
+		.catch((err) => {
+			console.error(
+				'🔥 Erro crítico ao configurar search_path:',
+				err.message,
+			);
+		});
+});
 
-	console.log('Servidor conectado!');
+// 2. Escuta erros em clientes "ociosos" (idle clients)
+// Isso é vital: previne que um problema de rede ou restart do Postgres derrube seu Node.js
+pool.on('error', (err, client) => {
+	console.error(
+		'🔥 Erro inesperado em uma conexão ociosa do banco de dados:',
+		err.message,
+	);
 });
 
 module.exports = {

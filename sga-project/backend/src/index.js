@@ -1,9 +1,8 @@
-const path = require('path');
-// Carrega as variáveis de ambiente baseadas no caminho do seu código original
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+// Inicializa e valida as variáveis de ambiente do .env como primeiro passo do boot
+require('./config/env');
 
 const startServer = require('./server');
-const pool = require('./config/database'); // Importado apenas para validar a conexão se desejar
+const pool = require('./config/database');
 
 const bootstrap = async () => {
 	try {
